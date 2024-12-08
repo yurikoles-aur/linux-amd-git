@@ -6,14 +6,14 @@
 #
 
 pkgbase=linux-amd-git
-pkgver=6.7.r1233502.699d392903c3
+pkgver=6.12.r1312365.979bfe291b5b
 pkgrel=1
 pkgdesc='Linux kernel with bleeding-edge AMDGPU drivers'
 url=https://gitlab.freedesktop.org/agd5f/linux
 _product="${pkgbase%-git}"
 _branch=drm-next
 arch=(x86_64)
-license=(GPL2)
+license=(GPL-2.0-only)
 makedepends=(
   bc
   cpio
@@ -30,18 +30,22 @@ makedepends=(
   graphviz
   imagemagick
   python-sphinx
+  python-yaml
   texlive-latexextra
 )
-options=('!strip')
+options=(
+  !debug
+  !strip
+)
 _srcname=$pkgbase
 source=(
   "$_srcname::git+https://gitlab.freedesktop.org/agd5f/linux.git#branch=$_branch"
   config  # the main kernel config file
 )
 sha256sums=('SKIP'
-            'f77aab33af83c635e0445c6e424922cdc054efe2430c8c831f8bead23e08ba88')
+            'ff43e39ced765b49aa756c6a6f510cefb0435455ce6527eef50a3733c871631f')
 b2sums=('SKIP'
-        'eee80b262d447770f89bb16e4c84a5faedd8e2a46d57a5b6ad6371f5a9a8e11194f82c9160d78486fc1a889ad9dea6f0b2d90b8a21235aefc30bf7fe3ef355f6')
+        '834704b394e78afd696450bdefd6bb0c8a2ac54fe598d7c771bd21874c0c6e78f02d4e18f033461aa026b39f316aead95385212d74c9ba2993611eb0c0587a2f')
 
 pkgver() {
   cd $_srcname
@@ -85,6 +89,7 @@ prepare() {
 build() {
   cd $_srcname
   make all
+  make -C tools/bpf/bpftool vmlinux.h feature-clang-bpf-co-re=1
   make htmldocs
 }
 
@@ -96,8 +101,9 @@ _package() {
     kmod
   )
   optdepends=(
-    'wireless-regdb: to set the correct wireless channels of your country'
     'linux-firmware: firmware images needed for some devices'
+    'scx-scheds: to use sched-ext schedulers'
+    'wireless-regdb: to set the correct wireless channels of your country'
   )
   provides=(
     KSMBD-MODULE
@@ -137,10 +143,11 @@ _package-headers() {
 
   echo "Installing build files..."
   install -Dt "$builddir" -m644 .config Makefile Module.symvers System.map \
-    localversion.* version vmlinux
+    localversion.* version vmlinux tools/bpf/bpftool/vmlinux.h
   install -Dt "$builddir/kernel" -m644 kernel/Makefile
   install -Dt "$builddir/arch/x86" -m644 arch/x86/Makefile
   cp -t "$builddir" -a scripts
+  ln -srt "$builddir" "$builddir/scripts/gdb/vmlinux-gdb.py"
 
   # required when STACK_VALIDATION is enabled
   install -Dt "$builddir/tools/objtool" tools/objtool/objtool
