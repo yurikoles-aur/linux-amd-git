@@ -6,7 +6,7 @@
 #
 
 pkgbase=linux-amd-git
-pkgver=6.14.r1335463.f245b400a223
+pkgver=6.14.r1335700.3521276ad14f
 pkgrel=1
 pkgdesc='Linux kernel with bleeding-edge AMDGPU drivers'
 url=https://gitlab.freedesktop.org/agd5f/linux
@@ -43,9 +43,9 @@ source=(
   config  # the main kernel config file
 )
 sha256sums=('SKIP'
-            'c6c12ee73e386142074ce76cc5409552815a7d9812a1d4bbd2d686fc9e785539')
+            '9a195bc4d8b492b0f44da392689746f605ca946e4f396bbc25fdbffb383899c1')
 b2sums=('SKIP'
-        '4a84bec5984fc79cb89b660e735dda88b83a41b8f45939e283999d52e823f9a83e3c182a40e091abb12a6ff4cbacd2672418ba27212eceecdddb501cfb191ee3')
+        'eedd98ed226561af9b279b931d5251974ed98cf21fa0974a855dd0365a16d6702f190dc60eca9bb337534110d94d070e7c7bc5cd61ba774ab38d441b567cce6c')
 
 pkgver() {
   cd $_srcname
